@@ -22,11 +22,6 @@ components:
   - name: python-django
     container:
       image: quay.io/devspaces/udi-rhel8:3.17
-      volumeMounts:
-        - name: venv
-          path: /home/user/.venv
-        - name: django-volume
-          path: /app
       memoryLimit: 2Gi
       memoryRequest: 1Gi
       cpuLimit: '2'
@@ -38,37 +33,31 @@ components:
           exposure: public
       command:
         - /bin/sh
+      args:
         - -c
         - |
-          python -m venv .venv && . .venv/bin/activate && \
+          cd ${PROJECT_ROOT} && \
+          python -m venv .venv && \
+          . .venv/bin/activate && \
           pip install -r requirements.txt && \
           python manage.py migrate && \
           python manage.py runserver 0.0.0.0:8000
-      # volumeMounts:
-      #   - name: django-volume
-      #     path: /app
-  - name: venv
-    volume:
-      size: 1G
-  - name: django-volume
-    volume:
-      size: 1G
 commands:
   - id: install-dependencies
     exec:
       component: python-django
-      commandLine: "pip install -r requirements.txt"
-      workingDir: /app
-  - id: run-django
-    exec:
-      component: python-django
-      commandLine: "python manage.py runserver 0.0.0.0:8000"
-      workingDir: /app
+      commandLine: ". .venv/bin/activate && pip install -r requirements.txt"
+      workingDir: ${PROJECT_ROOT}
   - id: migrate-database
     exec:
       component: python-django
-      commandLine: "python manage.py migrate"
-      workingDir: /app
+      commandLine: ". .venv/bin/activate && python manage.py migrate"
+      workingDir: ${PROJECT_ROOT}
+  - id: run-django
+    exec:
+      component: python-django
+      commandLine: ". .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
+      workingDir: ${PROJECT_ROOT}
 projects:
   - name: django-postgres-devspaces
     git:
