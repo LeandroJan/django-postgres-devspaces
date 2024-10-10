@@ -1,0 +1,65 @@
+schemaVersion: 2.2.0
+metadata:
+  name: django-postgres
+  version: 1.0.0
+  description: Devfile for Django server with PostgreSQL on OpenShift DevSpaces
+components:
+  - name: postgres
+    container:
+      image: postgres:14
+      env:
+        - name: POSTGRES_DB
+          value: "yourdbname"
+        - name: POSTGRES_USER
+          value: "youruser"
+        - name: POSTGRES_PASSWORD
+          value: "yourpassword"
+      endpoints:
+        - name: postgres
+          targetPort: 5432
+          exposure: none
+      mountSources: false
+  - name: python-django
+    container:
+      image: python:3.10
+      memoryLimit: 1024Mi
+      cpuLimit: 500m
+      mountSources: true
+      endpoints:
+        - name: django
+          targetPort: 8000
+          exposure: public
+      command:
+        - /bin/sh
+        - -c
+        - |
+          pip install -r requirements.txt && \
+          python manage.py migrate && \
+          python manage.py runserver 0.0.0.0:8000
+      volumeMounts:
+        - name: django-volume
+          path: /app
+  - name: django-volume
+    volume: {}
+commands:
+  - id: install-dependencies
+    exec:
+      component: python-django
+      commandLine: "pip install -r requirements.txt"
+      workingDir: /app
+  - id: run-django
+    exec:
+      component: python-django
+      commandLine: "python manage.py runserver 0.0.0.0:8000"
+      workingDir: /app
+  - id: migrate-database
+    exec:
+      component: python-django
+      commandLine: "python manage.py migrate"
+      workingDir: /app
+projects:
+  - name: django-postgres-devspaces
+    git:
+      remotes:
+        origin: "https://github.com/LeandroJan/django-postgres-devspaces.git"
+        type: git
