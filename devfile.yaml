@@ -28,7 +28,9 @@ components:
         - name: django-volume
           path: /app
       memoryLimit: 2Gi
-      cpuLimit: 1Gi
+      memoryRequest: 1Gi
+      cpuLimit: '2'
+      cpuRequest: '1'
       mountSources: true
       endpoints:
         - name: django
