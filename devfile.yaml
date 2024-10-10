@@ -21,9 +21,14 @@ components:
       mountSources: false
   - name: python-django
     container:
-      image: python:3.10
-      memoryLimit: 1024Mi
-      cpuLimit: 500m
+      image: quay.io/devspaces/udi-rhel8:3.17
+      volumeMounts:
+        - name: venv
+          path: /home/user/.venv
+        - name: django-volume
+          path: /app
+      memoryLimit: 2Gi
+      cpuLimit: 1Gi
       mountSources: true
       endpoints:
         - name: django
@@ -33,14 +38,19 @@ components:
         - /bin/sh
         - -c
         - |
+          python -m venv .venv && . .venv/bin/activate && \
           pip install -r requirements.txt && \
           python manage.py migrate && \
           python manage.py runserver 0.0.0.0:8000
-      volumeMounts:
-        - name: django-volume
-          path: /app
+      # volumeMounts:
+      #   - name: django-volume
+      #     path: /app
+  - name: venv
+    volume:
+      size: 1G
   - name: django-volume
-    volume: {}
+    volume:
+      size: 1G
 commands:
   - id: install-dependencies
     exec:
