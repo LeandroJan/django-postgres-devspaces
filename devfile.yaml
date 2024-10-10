@@ -12,8 +12,8 @@ components:
           value: "db"
         - name: POSTGRESQL_USER
           value: "user"
-        - name: POSTGRES_PASSWORD
-          value: "passoword"
+        - name: POSTGRESQL_PASSWORD
+          value: "password"
       endpoints:
         - name: postgres
           targetPort: 5432
