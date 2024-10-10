@@ -62,4 +62,6 @@ projects:
     git:
       remotes:
         origin: "https://github.com/LeandroJan/django-postgres-devspaces.git"
-        type: git
+      checkoutFrom:
+        remote: "origin"
+        revision: "main"
