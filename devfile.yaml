@@ -21,7 +21,7 @@ components:
       mountSources: false
   - name: python-django
     container:
-      image: quay.io/devspaces/udi-rhel8:3.17
+      image: quay.io/devspaces/udi-rhel8:3.9
       env:
         - name: KUBEDOCK_ENABLED
           value: 'true'
