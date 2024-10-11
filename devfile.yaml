@@ -56,7 +56,7 @@ commands:
         kind: run
         isDefault: true
 events:
-  preStart:
+  postStart:
     - create-venv
     - install-dependencies
     - migrate-database
