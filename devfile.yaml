@@ -72,17 +72,17 @@ commands:
         isDefault: true
   - id: install-dependencies
     exec:
-      component: python-django
+      component: python
       commandLine: ". .venv/bin/activate && pip install -r requirements.txt"
       workingDir: ${PROJECT_SOURCE}
   - id: migrate-database
     exec:
-      component: python-django
+      component: python
       commandLine: ". .venv/bin/activate && python manage.py migrate"
       workingDir: ${PROJECT_SOURCE}
   - id: run-django
     exec:
-      component: python-django
+      component: python
       commandLine: ". .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
       workingDir: ${PROJECT_SOURCE}
 events:
