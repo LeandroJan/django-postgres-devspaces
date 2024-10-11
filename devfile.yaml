@@ -62,14 +62,14 @@ components:
     volume:
       size: 2G
 commands:
-  - id: run
+  - id: create-env
     exec:
       component: python
       commandLine: "python -m venv .venv"
       workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: run
-        isDefault: true
+      # group:
+      #   kind: run
+      #   isDefault: true
   - id: install-dependencies
     exec:
       component: python
@@ -87,6 +87,7 @@ commands:
       workingDir: ${PROJECT_SOURCE}
 events:
   postStart:
+    - create-env
     - install-dependencies
     # - migrate-database
     # - run-django
