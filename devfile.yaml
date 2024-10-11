@@ -1,4 +1,4 @@
-schemaVersion: 2.2.0
+schemaVersion: 2.2.2
 metadata:
   name: django-postgres
   version: 1.0.0
@@ -24,9 +24,9 @@ components:
   - name: python-django
     container:
       image: quay.io/devspaces/udi-rhel8:3.9
-      env:
-        - name: KUBEDOCK_ENABLED
-          value: 'true'
+      # env:
+      #   - name: KUBEDOCK_ENABLED
+      #     value: 'true'
       volumeMounts:
         - name: venv
           path: /home/user/.venv
@@ -66,11 +66,11 @@ commands:
       group:
         kind: run
         isDefault: true
-events:
-  postStart:
-    - create-venv
-    - install-dependencies
-    - migrate-database
+# events:
+#   postStart:
+#     - create-venv
+#     - install-dependencies
+#     - migrate-database
 projects:
   - name: django-postgres-devspaces
     git:
