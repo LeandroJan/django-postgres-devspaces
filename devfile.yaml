@@ -6,19 +6,7 @@ metadata:
 components:
   - name: postgres
     container:
-      image: quay.io/centos7/postgresql-13-centos7:69623db6c74ac2437a2f11c0733e38c4b8dbb6b1
-      env:
-        - name: POSTGRESQL_DATABASE
-          value: "db"
-        - name: POSTGRESQL_USER
-          value: "user"
-        - name: POSTGRESQL_PASSWORD
-          value: "password"
-      endpoints:
-        - name: postgres
-          targetPort: 5432
-          exposure: none
-      mountSources: false
+      # ... [existing configuration] ...
   - name: python-django
     container:
       image: quay.io/devspaces/udi-rhel8:3.17
@@ -31,33 +19,35 @@ components:
         - name: django
           targetPort: 8000
           exposure: public
-      command:
-        - /bin/sh
-      args:
-        - -c
-        - |
-          cd ${PROJECT_SOURCE} && \
-          python -m venv .venv && \
-          . .venv/bin/activate && \
-          pip install -r requirements.txt
-     #     python manage.py migrate && \
-     #     python manage.py runserver 0.0.0.0:8000
 commands:
+  - id: create-venv
+    exec:
+      component: python-django
+      commandLine: "python -m venv .venv"
+      workingDir: ${PROJECT_ROOT}
   - id: install-dependencies
     exec:
       component: python-django
       commandLine: ". .venv/bin/activate && pip install -r requirements.txt"
-      workingDir: ${PROJECT_SOURCE}
+      workingDir: ${PROJECT_ROOT}
   - id: migrate-database
     exec:
       component: python-django
       commandLine: ". .venv/bin/activate && python manage.py migrate"
-      workingDir: ${PROJECT_SOURCE}
+      workingDir: ${PROJECT_ROOT}
   - id: run-django
     exec:
       component: python-django
       commandLine: ". .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
-      workingDir: ${PROJECT_SOURCE}
+      workingDir: ${PROJECT_ROOT}
+      group:
+        kind: run
+        isDefault: true
+events:
+  preStart:
+    - create-venv
+    - install-dependencies
+    - migrate-database
 projects:
   - name: django-postgres-devspaces
     git:
