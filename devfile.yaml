@@ -70,23 +70,23 @@ commands:
       group:
         kind: run
         isDefault: true
-  # - id: install-dependencies
-  #   exec:
-  #     component: python-django
-  #     commandLine: ". .venv/bin/activate && pip install -r requirements.txt"
-  #     workingDir: ${PROJECT_SOURCE}
-  # - id: migrate-database
-  #   exec:
-  #     component: python-django
-  #     commandLine: ". .venv/bin/activate && python manage.py migrate"
-  #     workingDir: ${PROJECT_SOURCE}
-  # - id: run-django
-  #   exec:
-  #     component: python-django
-  #     commandLine: ". .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
-  #     workingDir: ${PROJECT_SOURCE}
-# events:
-#   postStart:
-#     - create-venv
-#     - install-dependencies
-#     - migrate-database
+  - id: install-dependencies
+    exec:
+      component: python-django
+      commandLine: ". .venv/bin/activate && pip install -r requirements.txt"
+      workingDir: ${PROJECT_SOURCE}
+  - id: migrate-database
+    exec:
+      component: python-django
+      commandLine: ". .venv/bin/activate && python manage.py migrate"
+      workingDir: ${PROJECT_SOURCE}
+  - id: run-django
+    exec:
+      component: python-django
+      commandLine: ". .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
+      workingDir: ${PROJECT_SOURCE}
+events:
+  postStart:
+    - install-dependencies
+    # - migrate-database
+    # - run-django
