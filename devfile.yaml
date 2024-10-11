@@ -3,6 +3,8 @@ metadata:
   name: django-postgres
   version: 1.0.0
   description: Devfile for Django server with PostgreSQL on OpenShift DevSpaces
+attributes:
+  controller.devfile.io/storage-type: ephemeral
 components:
   - name: postgres
     container:
