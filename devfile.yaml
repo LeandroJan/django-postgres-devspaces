@@ -73,7 +73,7 @@ commands:
   - id: install-dependencies
     exec:
       component: python
-      commandLine: ". .venv/bin/activate && pip install -r requirements.txt"
+      commandLine: "sh .venv/bin/activate && pip install -r requirements.txt"
       workingDir: ${PROJECT_SOURCE}
   - id: migrate-database
     exec:
