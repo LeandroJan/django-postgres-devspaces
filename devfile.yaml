@@ -27,6 +27,9 @@ components:
       env:
         - name: KUBEDOCK_ENABLED
           value: 'true'
+      volumeMounts:
+        - name: venv
+          path: /home/user/.venv
       memoryLimit: 2Gi
       memoryRequest: 1Gi
       cpuLimit: '2'
@@ -36,6 +39,9 @@ components:
         - name: django
           targetPort: 8000
           exposure: public
+  - name: venv
+    volume:
+      size: 2G
 commands:
   - id: create-venv
     exec:
