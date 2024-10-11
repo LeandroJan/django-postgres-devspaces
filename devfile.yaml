@@ -5,6 +5,15 @@ metadata:
   description: Devfile for Django server with PostgreSQL on OpenShift DevSpaces
 attributes:
   controller.devfile.io/storage-type: ephemeral
+projects:
+  - attributes: {}
+    name: django-postgres-devspaces
+    git:
+      remotes:
+        origin: "https://github.com/LeandroJan/django-postgres-devspaces.git"
+      checkoutFrom:
+        remote: "origin"
+        revision: "main"
 components:
   - name: postgres
     container:
@@ -23,7 +32,7 @@ components:
       mountSources: false
   - name: python-django
     container:
-      image: quay.io/devspaces/udi-rhel8:3.9
+      image: quay.io/devspaces/udi-rhel8:3.17
       # env:
       #   - name: KUBEDOCK_ENABLED
       #     value: 'true'
@@ -48,6 +57,9 @@ commands:
       component: python-django
       commandLine: "python -m venv .venv"
       workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: run
+        isDefault: true
   - id: install-dependencies
     exec:
       component: python-django
@@ -63,19 +75,8 @@ commands:
       component: python-django
       commandLine: ". .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
       workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: run
-        isDefault: true
 # events:
 #   postStart:
 #     - create-venv
 #     - install-dependencies
 #     - migrate-database
-projects:
-  - name: django-postgres-devspaces
-    git:
-      remotes:
-        origin: "https://github.com/LeandroJan/django-postgres-devspaces.git"
-      checkoutFrom:
-        remote: "origin"
-        revision: "main"
