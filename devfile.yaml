@@ -37,7 +37,7 @@ components:
         - name: POSTGRESQL_PASSWORD
           value: "password"
         - name: POSTGRESQL_HOST
-          value: "postgres"
+          value: "localhost"
         - name: POSTGRESQL_PORT
           value: "5432"
   - name: postgres
