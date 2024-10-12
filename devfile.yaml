@@ -64,14 +64,18 @@ commands:
       component: python
       commandLine: "python -m venv .venv"
       workingDir: ${PROJECT_SOURCE}
-      # group:
-      #   kind: run
-      #   isDefault: true
   - id: install-dependencies
     exec:
       component: python
       commandLine: "sh .venv/bin/activate && pip install -r requirements.txt"
       workingDir: ${PROJECT_SOURCE}
+  - id: setup-environment
+    composite:
+      label: "Setup Environment"
+      commands:
+        - create-env
+        - install-dependencies
+      parallel: false
   - id: migrate-database
     exec:
       component: python
@@ -82,9 +86,13 @@ commands:
       component: python
       commandLine: "source .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
       workingDir: ${PROJECT_SOURCE}
+      # group:
+      #   kind: run
+      #   isDefault: true
 events:
   postStart:
-    - create-env
-    - install-dependencies
+  - setup-environment
+    # - create-env
+    # - install-dependencies
     # - migrate-database
     # - run-django
