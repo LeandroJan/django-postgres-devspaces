@@ -59,6 +59,15 @@ components:
     volume:
       size: 2G
 commands:
+  - id: setup-environment
+    exec:
+      component: python
+      commandLine: |
+        python -m venv .venv && \
+        sh .venv/bin/activate && \
+        pip install -r requirements.txt && \
+        python manage.py migrate
+      workingDir: ${PROJECT_SOURCE}
   - id: create-env
     exec:
       component: python
@@ -68,14 +77,7 @@ commands:
     exec:
       component: python
       commandLine: "sh .venv/bin/activate && pip install -r requirements.txt"
-      workingDir: ${PROJECT_SOURCE}
-  - id: setup-environment
-    composite:
-      label: "Setup Environment"
-      commands:
-        - create-env
-        - install-dependencies
-      parallel: false
+      workingDir: ${PROJECT_SOURCE}    
   - id: migrate-database
     exec:
       component: python
@@ -86,9 +88,9 @@ commands:
       component: python
       commandLine: "source .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
       workingDir: ${PROJECT_SOURCE}
-      # group:
-      #   kind: run
-      #   isDefault: true
+      group:
+        kind: run
+        isDefault: true
 events:
   postStart:
   - setup-environment
