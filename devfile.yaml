@@ -129,7 +129,7 @@ commands:
 events:
   postStart:
     - create-venv
-    # - install-dependencies
+    - install-dependencies
     # - wait-for-db
     # - run-migrations
     # - create-superuser
