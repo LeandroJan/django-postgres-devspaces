@@ -3,8 +3,6 @@ metadata:
   name: django-postgres
   version: 1.0.0
   description: Devfile for Django server with PostgreSQL on OpenShift DevSpaces
-# attributes:
-#   controller.devfile.io/storage-type: ephemeral
 projects:
   - name: django-postgres-devspaces
     git:
@@ -66,22 +64,11 @@ commands:
         python -m venv .venv && \
         sh .venv/bin/activate && \
         pip install -r requirements.txt && \
-        python manage.py migrate
-      workingDir: ${PROJECT_SOURCE}
-  - id: create-env
-    exec:
-      component: python
-      commandLine: "python -m venv .venv"
-      workingDir: ${PROJECT_SOURCE}
-  - id: install-dependencies
-    exec:
-      component: python
-      commandLine: "sh .venv/bin/activate && pip install -r requirements.txt"
-      workingDir: ${PROJECT_SOURCE}    
-  - id: migrate-database
-    exec:
-      component: python
-      commandLine: "sh .venv/bin/activate && python manage.py migrate"
+        python manage.py migrate && \
+        echo "from django.contrib.auth import get_user_model; \
+        User = get_user_model(); \
+        User.objects.filter(username='admin').exists() or \
+        User.objects.create_superuser('admin', 'admin@example.com', '12345678')" | python manage.py shell
       workingDir: ${PROJECT_SOURCE}
   - id: run-django
     exec:
@@ -93,8 +80,5 @@ commands:
         isDefault: true
 events:
   postStart:
-  - setup-environment
-    # - create-env
-    # - install-dependencies
-    # - migrate-database
+    - setup-environment
     # - run-django
