@@ -70,28 +70,59 @@ commands:
   #       User.objects.create_superuser('admin', 'admin@example.com', '12345678')" | python manage.py shell && \
   #       python manage.py migrate
   #     workingDir: ${PROJECT_SOURCE}
-  - id: setup-environment
+  - id: create-venv
+    exec:
+      component: python
+      commandLine: "python -m venv .venv"
+      workingDir: ${PROJECT_SOURCE}
+
+  - id: install-dependencies
+    exec:
+      component: python
+      commandLine: ".venv/bin/pip install -r requirements.txt"
+      workingDir: ${PROJECT_SOURCE}
+
+  - id: wait-for-db
     exec:
       component: python
       commandLine: |
-        python -m venv .venv && \
-        .venv/bin/pip install -r requirements.txt && \
-        echo "Waiting for PostgreSQL to be ready..." && \
-        .venv/bin/python -c "import time, psycopg2; from django.db import connections; \
+        .venv/bin/python -c "import time, psycopg2; from psycopg2 import OperationalError; \
         while True: \
-            try: \
-                connections['default'].cursor(); \
-                print('PostgreSQL is ready!'); \
-                break; \
-            except psycopg2.OperationalError: \
-                print('PostgreSQL is unavailable, waiting...'); \
-                time.sleep(3)" && \
-        .venv/bin/python manage.py migrate && \
+        try: \
+        conn = psycopg2.connect(dbname='db', user='user', password='password', host='postgres', port='5432'); \
+        conn.close(); \
+        print('PostgreSQL is ready!'); \
+        break; \
+        except OperationalError: \
+        print('Waiting for PostgreSQL...'); \
+        time.sleep(3)"
+      workingDir: ${PROJECT_SOURCE}
+
+  - id: run-migrations
+    exec:
+      component: python
+      commandLine: ".venv/bin/python manage.py migrate"
+      workingDir: ${PROJECT_SOURCE}
+
+  - id: create-superuser
+    exec:
+      component: python
+      commandLine: |
         echo \"from django.contrib.auth import get_user_model; \
         User = get_user_model(); \
         User.objects.filter(username='admin').exists() or \
-        User.objects.create_superuser('admin', 'admin@example.com', '12345678')\" | .venv/bin/python manage.py shell
+        User.objects.create_superuser('admin', 'admin@example.com', '12345678')\" | \
+        .venv/bin/python manage.py shell
       workingDir: ${PROJECT_SOURCE}
+
+  - id: run-django
+    exec:
+      component: python
+      commandLine: ".venv/bin/python manage.py runserver 0.0.0.0:8000"
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: run
+        isDefault: true
   - id: run-django
     exec:
       component: python
@@ -102,5 +133,14 @@ commands:
         isDefault: true
 events:
   postStart:
-    - setup-environment
+    - create-venv
+    - install-dependencies
+    - wait-for-db
+    - run-migrations
+    - create-superuser
+    # - run-django
+
+# events:
+#   postStart:
+#     - setup-environment
     # - run-django
