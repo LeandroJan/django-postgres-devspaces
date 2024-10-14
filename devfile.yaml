@@ -86,16 +86,11 @@ commands:
     exec:
       component: python
       commandLine: |
-        .venv/bin/python -c "import time, psycopg2; from psycopg2 import OperationalError; \
-        while True: \
-        try: \
-        conn = psycopg2.connect(dbname='db', user='user', password='password', host='postgres', port='5432'); \
-        conn.close(); \
-        print('PostgreSQL is ready!'); \
-        break; \
-        except OperationalError: \
-        print('Waiting for PostgreSQL...'); \
-        time.sleep(3)"
+        echo "Waiting for PostgreSQL to be ready..." && \
+        while ! .venv/bin/python manage.py dbshell -c "SELECT 1"; do \
+          echo "PostgreSQL is unavailable, sleeping..."; \
+          sleep 3; \
+        done
       workingDir: ${PROJECT_SOURCE}
 
   - id: run-migrations
