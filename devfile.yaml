@@ -57,85 +57,86 @@ components:
     volume:
       size: 2G
 commands:
-  # - id: setup-environment
-  #   exec:
-  #     component: python
-  #     commandLine: |
-  #       python -m venv .venv && \
-  #       sh .venv/bin/activate && \
-  #       pip install -r requirements.txt && \
-  #       echo "from django.contrib.auth import get_user_model; \
-  #       User = get_user_model(); \
-  #       User.objects.filter(username='admin').exists() or \
-  #       User.objects.create_superuser('admin', 'admin@example.com', '12345678')" | python manage.py shell && \
-  #       python manage.py migrate
-  #     workingDir: ${PROJECT_SOURCE}
-  - id: create-venv
-    exec:
-      component: python
-      commandLine: "python -m venv .venv"
-      workingDir: ${PROJECT_SOURCE}
-
-  - id: install-dependencies
-    exec:
-      component: python
-      commandLine: ".venv/bin/pip install -r requirements.txt"
-      workingDir: ${PROJECT_SOURCE}
-
-  - id: wait-for-db
+  - id: setup-environment
     exec:
       component: python
       commandLine: |
-        echo "Waiting for PostgreSQL to be ready..." && \
-        while ! .venv/bin/python manage.py dbshell -c "SELECT 1"; do \
-          echo "PostgreSQL is unavailable, sleeping..."; \
-          sleep 3; \
-        done
-      workingDir: ${PROJECT_SOURCE}
-
-  - id: run-migrations
-    exec:
-      component: python
-      commandLine: ".venv/bin/python manage.py migrate"
-      workingDir: ${PROJECT_SOURCE}
-
-  - id: create-superuser
-    exec:
-      component: python
-      commandLine: |
-        echo \"from django.contrib.auth import get_user_model; \
+        python -m venv .venv && \
+        sh .venv/bin/activate && \
+        pip install -r requirements.txt && \
+        python wait_db.py && \
+        echo "from django.contrib.auth import get_user_model; \
         User = get_user_model(); \
         User.objects.filter(username='admin').exists() or \
-        User.objects.create_superuser('admin', 'admin@example.com', '12345678')\" | \
-        .venv/bin/python manage.py shell
+        User.objects.create_superuser('admin', 'admin@example.com', '12345678')" | python manage.py shell && \
+        python manage.py migrate
       workingDir: ${PROJECT_SOURCE}
+#   - id: create-venv
+#     exec:
+#       component: python
+#       commandLine: "python -m venv .venv"
+#       workingDir: ${PROJECT_SOURCE}
 
-  - id: run-django
-    exec:
-      component: python
-      commandLine: ".venv/bin/python manage.py runserver 0.0.0.0:8000"
-      workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: run
-        isDefault: true
-  - id: run-django
-    exec:
-      component: python
-      commandLine: "sh .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
-      workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: run
-        isDefault: true
-events:
-  postStart:
-    - create-venv
-    - install-dependencies
+#   - id: install-dependencies
+#     exec:
+#       component: python
+#       commandLine: "sh .venv/bin/activate && pip install -r requirements.txt"
+#       workingDir: ${PROJECT_SOURCE}
+
+#   - id: wait-for-db
+#     exec:
+#       component: python
+#       commandLine: |
+#         echo "Waiting for PostgreSQL to be ready..." && \
+#         while ! .venv/bin/python manage.py dbshell -c "SELECT 1"; do \
+#           echo "PostgreSQL is unavailable, sleeping..."; \
+#           sleep 3; \
+#         done
+#       workingDir: ${PROJECT_SOURCE}
+
+#   - id: run-migrations
+#     exec:
+#       component: python
+#       commandLine: ".venv/bin/python manage.py migrate"
+#       workingDir: ${PROJECT_SOURCE}
+
+#   - id: create-superuser
+#     exec:
+#       component: python
+#       commandLine: |
+#         echo \"from django.contrib.auth import get_user_model; \
+#         User = get_user_model(); \
+#         User.objects.filter(username='admin').exists() or \
+#         User.objects.create_superuser('admin', 'admin@example.com', '12345678')\" | \
+#         .venv/bin/python manage.py shell
+#       workingDir: ${PROJECT_SOURCE}
+
+#   - id: run-django
+#     exec:
+#       component: python
+#       commandLine: ".venv/bin/python manage.py runserver 0.0.0.0:8000"
+#       workingDir: ${PROJECT_SOURCE}
+#       group:
+#         kind: run
+#         isDefault: true
+#   - id: run-django
+#     exec:
+#       component: python
+#       commandLine: "sh .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
+#       workingDir: ${PROJECT_SOURCE}
+#       group:
+#         kind: run
+#         isDefault: true
+# events:
+#   postStart:
+#     - create-venv
+#     - install-dependencies
     # - wait-for-db
     # - run-migrations
     # - create-superuser
     # - run-django
 
-# events:
-#   postStart:
-#     - setup-environment
+events:
+  postStart:
+    - setup-environment
     # - run-django
