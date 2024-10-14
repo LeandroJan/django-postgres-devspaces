@@ -64,7 +64,7 @@ commands:
         python -m venv .venv && \
         sh .venv/bin/activate && \
         pip install -r requirements.txt && \
-        sleep 15 && \
+        python wait_db.py && \
         echo "from django.contrib.auth import get_user_model; \
         User = get_user_model(); \
         User.objects.filter(username='admin').exists() or \
