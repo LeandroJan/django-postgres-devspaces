@@ -130,7 +130,7 @@ events:
   postStart:
     - create-venv
     - install-dependencies
-    - wait-for-db
+    # - wait-for-db
     - run-migrations
     - create-superuser
     # - run-django
