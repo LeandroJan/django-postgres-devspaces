@@ -86,7 +86,7 @@ commands:
   - id: run-django
     exec:
       component: python
-      commandLine: "source .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
+      commandLine: "sh .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
       workingDir: ${PROJECT_SOURCE}
       group:
         kind: run
