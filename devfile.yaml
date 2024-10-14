@@ -82,7 +82,7 @@ commands:
     exec:
       component: python
       commandLine: "sh .venv/bin/activate && python manage.py migrate"
-      workingDir: ${PROJECT_SOURCE}d
+      workingDir: ${PROJECT_SOURCE}
   - id: run-django
     exec:
       component: python
