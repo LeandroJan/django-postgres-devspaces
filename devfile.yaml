@@ -85,7 +85,7 @@ commands:
   - id: wait-for-db
     exec:
       component: python
-      commandLine: "python wait_db.py"
+      commandLine: "python wait_db.py &"
       workingDir: ${PROJECT_SOURCE}
 
   - id: create-superuser
@@ -98,7 +98,7 @@ commands:
         User.objects.create_superuser('admin', 'admin@example.com', '12345678')\" | \
         .venv/bin/python manage.py shell
       workingDir: ${PROJECT_SOURCE}
-      
+
   - id: run-migrations
     exec:
       component: python
@@ -124,7 +124,7 @@ events:
   postStart:
     - create-venv
     - install-dependencies
-    # - wait-for-db
+    - wait-for-db
     # - run-migrations
     # - create-superuser
     # - run-django
