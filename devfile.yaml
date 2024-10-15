@@ -87,12 +87,12 @@ commands:
       component: python
       commandLine: |
         python wait_db.py && \
-        sh .venv/bin/activate && \
         echo \"from django.contrib.auth import get_user_model; \
         User = get_user_model(); \
         User.objects.filter(username='admin').exists() or \
         User.objects.create_superuser('admin', 'admin@example.com', '12345678')\" | \
         python manage.py shell && \
+        sh .venv/bin/activate && \
         python manage.py migrate &
       workingDir: ${PROJECT_SOURCE}
 
@@ -132,7 +132,7 @@ events:
   postStart:
     - create-venv
     - install-dependencies
-    - wait-for-db
+    # - wait-for-db
     # - run-migrations
     # - create-superuser
     # - run-django
