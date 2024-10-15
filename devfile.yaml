@@ -85,7 +85,15 @@ commands:
   - id: wait-for-db
     exec:
       component: python
-      commandLine: "python wait_db.py && sh .venv/bin/activate && python manage.py migrate &"
+      commandLine: |
+        python wait_db.py && \
+        sh .venv/bin/activate && \
+        echo \"from django.contrib.auth import get_user_model; \
+        User = get_user_model(); \
+        User.objects.filter(username='admin').exists() or \
+        User.objects.create_superuser('admin', 'admin@example.com', '12345678')\" | \
+        python manage.py shell && \
+        python manage.py migrate &
       workingDir: ${PROJECT_SOURCE}
 
   - id: create-superuser
