@@ -122,16 +122,16 @@ commands:
   #     group:
   #       kind: run
   #       isDefault: true
-# events:
-#   postStart:
-#     - create-venv
-#     - install-dependencies
+events:
+  postStart:
+    - create-venv
+    - install-dependencies
     # - wait-for-db
     # - run-migrations
     # - create-superuser
     # - run-django
 
-events:
-  postStart:
-    - setup-environment
+# events:
+#   postStart:
+#     - setup-environment
     # - run-django
