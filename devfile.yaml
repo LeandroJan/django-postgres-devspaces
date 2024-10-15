@@ -85,7 +85,7 @@ commands:
   - id: wait-for-db
     exec:
       component: python
-      commandLine: "python wait_db.py &"
+      commandLine: "python wait_db.py && sh .venv/bin/activate && python manage.py migrate &"
       workingDir: ${PROJECT_SOURCE}
 
   - id: create-superuser
