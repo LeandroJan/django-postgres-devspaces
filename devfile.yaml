@@ -12,22 +12,6 @@ projects:
         remote: "origin"
         revision: "main"
 components:
-  - name: postgres
-    container:
-      image: quay.io/centos7/postgresql-13-centos7:69623db6c74ac2437a2f11c0733e38c4b8dbb6b1
-      env:
-        - name: POSTGRESQL_DATABASE
-          value: "db"
-        - name: POSTGRESQL_USER
-          value: "user"
-        - name: POSTGRESQL_PASSWORD
-          value: "password"
-      endpoints:
-        - name: postgres
-          targetPort: 5432
-          exposure: none
-      mountSources: false
-      
   - name: python
     container:
       image: registry.redhat.io/devspaces/udi-rhel8@sha256:9199796c9dd82a16ebb2c4ff8d06b9727f392eb93eb7ffa2974ad6c16e3d8e5d
@@ -54,7 +38,21 @@ components:
           value: "localhost"
         - name: POSTGRESQL_PORT
           value: "5432"
-
+  - name: postgres
+    container:
+      image: quay.io/centos7/postgresql-13-centos7:69623db6c74ac2437a2f11c0733e38c4b8dbb6b1
+      env:
+        - name: POSTGRESQL_DATABASE
+          value: "db"
+        - name: POSTGRESQL_USER
+          value: "user"
+        - name: POSTGRESQL_PASSWORD
+          value: "password"
+      endpoints:
+        - name: postgres
+          targetPort: 5432
+          exposure: none
+      mountSources: false     
   - name: venv
     volume:
       size: 2G
@@ -90,12 +88,6 @@ commands:
       commandLine: "python wait_db.py"
       workingDir: ${PROJECT_SOURCE}
 
-  - id: run-migrations
-    exec:
-      component: python
-      commandLine: "sh .venv/bin/activate && python manage.py migrate"
-      workingDir: ${PROJECT_SOURCE}
-
   - id: create-superuser
     exec:
       component: python
@@ -105,6 +97,12 @@ commands:
         User.objects.filter(username='admin').exists() or \
         User.objects.create_superuser('admin', 'admin@example.com', '12345678')\" | \
         .venv/bin/python manage.py shell
+      workingDir: ${PROJECT_SOURCE}
+      
+  - id: run-migrations
+    exec:
+      component: python
+      commandLine: "sh .venv/bin/activate && python manage.py migrate"
       workingDir: ${PROJECT_SOURCE}
 
   - id: setup-environment
