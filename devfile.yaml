@@ -12,24 +12,27 @@ projects:
         remote: "origin"
         revision: "main"
 components:
-  - name: postgres
-    container:
-      image: quay.io/centos7/postgresql-13-centos7:69623db6c74ac2437a2f11c0733e38c4b8dbb6b1
-      env:
-        - name: POSTGRESQL_DATABASE
-          value: "db"
-        - name: POSTGRESQL_USER
-          value: "user"
-        - name: POSTGRESQL_PASSWORD
-          value: "password"
-      endpoints:
-        - name: postgres
-          targetPort: 5432
-          exposure: none
-      mountSources: false
   - name: python
     container:
       image: registry.redhat.io/devspaces/udi-rhel8@sha256:9199796c9dd82a16ebb2c4ff8d06b9727f392eb93eb7ffa2974ad6c16e3d8e5d
+      command:
+        - python
+        - -c
+        - |
+          import psycopg2
+          import sys
+          try:
+              conn = psycopg2.connect(
+                  host="postgres",
+                  port="5432",
+                  user="user",
+                  password="password",
+                  dbname="mydb"
+              )
+              conn.close()
+              sys.exit(0)
+          except Exception as e:
+              sys.exit(1)
       volumeMounts:
         - name: venv
           path: /home/user/.venv
@@ -53,6 +56,22 @@ components:
           value: "localhost"
         - name: POSTGRESQL_PORT
           value: "5432"
+  - name: postgres
+    container:
+      image: quay.io/centos7/postgresql-13-centos7:69623db6c74ac2437a2f11c0733e38c4b8dbb6b1
+      env:
+        - name: POSTGRESQL_DATABASE
+          value: "db"
+        - name: POSTGRESQL_USER
+          value: "user"
+        - name: POSTGRESQL_PASSWORD
+          value: "password"
+      endpoints:
+        - name: postgres
+          targetPort: 5432
+          exposure: none
+      mountSources: false
+
   # - name: pgadmin4
   #   container:
   #     image: es1n/pgadmin4-oc:latest  # Docker Hub image for pgAdmin4
@@ -132,7 +151,7 @@ events:
   postStart:
     - create-venv
     - install-dependencies
-    - wait-for-db
+    # - wait-for-db
     # - run-migrations
     # - create-superuser
     # - run-django
