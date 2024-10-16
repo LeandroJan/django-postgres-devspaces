@@ -71,6 +71,7 @@ components:
   - name: venv
     volume:
       size: 2G
+      
 commands:
   - id: create-venv
     exec:
@@ -84,18 +85,18 @@ commands:
       commandLine: "sh .venv/bin/activate && pip install -r requirements.txt"
       workingDir: ${PROJECT_SOURCE}
 
-  - id: wait-for-db
-    exec:
-      component: python
-      commandLine: |
-        python wait_db.py && \
-        sh .venv/bin/activate && \
-        python manage.py migrate && \
-        echo "from django.contrib.auth import get_user_model; \
-        User = get_user_model(); \
-        User.objects.filter(username='admin').exists() or \
-        User.objects.create_superuser('admin', 'admin@example.com', '12345678')" | python manage.py shell &
-      workingDir: ${PROJECT_SOURCE}
+  # - id: wait-for-db
+  #   exec:
+  #     component: python
+  #     commandLine: |
+  #       python wait_db.py && \
+  #       sh .venv/bin/activate && \
+  #       python manage.py migrate && \
+  #       echo "from django.contrib.auth import get_user_model; \
+  #       User = get_user_model(); \
+  #       User.objects.filter(username='admin').exists() or \
+  #       User.objects.create_superuser('admin', 'admin@example.com', '12345678')" | python manage.py shell &
+  #     workingDir: ${PROJECT_SOURCE}
 
   - id: create-superuser
     exec:
@@ -113,15 +114,6 @@ commands:
       commandLine: "sh .venv/bin/activate && python manage.py migrate"
       workingDir: ${PROJECT_SOURCE}
 
-  - id: run-django
-    exec:
-      component: python
-      commandLine: "sh .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
-      workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: run
-        isDefault: true      
-
   - id: setup-environment
     composite:
       commands:
@@ -130,8 +122,17 @@ commands:
         - run-migrations
         - create-superuser
         # - run-django
-      parallel: false
-        
+      parallel: false        
+
+  - id: run-django
+    exec:
+      component: python
+      commandLine: "sh .venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: run
+        isDefault: true  
+
 events:
   postStart:
     - create-venv
