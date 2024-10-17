@@ -62,20 +62,20 @@ components:
           targetPort: 8978
           exposure: public
 
-  - name: pgadmin4
-    container:
-      image: registry.connect.redhat.com/crunchydata/crunchy-pgadmin4:latest
-      env:
-        - name: PGADMIN_DEFAULT_EMAIL
-          value: "admin@example.com"   # Default email for pgAdmin login
-        - name: PGADMIN_DEFAULT_PASSWORD
-          value: "admin"               # Default password for pgAdmin login
-        - name: PGADMIN_LISTEN_PORT
-          value: "8080"                # Port pgAdmin listens on (non-root port)
-      endpoints:
-        - name: pgadmin
-          targetPort: 8080              # Expose pgAdmin on port 8080
-          exposure: public              # Make it accessible publicly   
+  # - name: pgadmin4
+  #   container:
+  #     image: registry.connect.redhat.com/crunchydata/crunchy-pgadmin4:latest
+  #     env:
+  #       - name: PGADMIN_DEFAULT_EMAIL
+  #         value: "admin@example.com"   # Default email for pgAdmin login
+  #       - name: PGADMIN_DEFAULT_PASSWORD
+  #         value: "admin"               # Default password for pgAdmin login
+  #       - name: PGADMIN_LISTEN_PORT
+  #         value: "8080"                # Port pgAdmin listens on (non-root port)
+  #     endpoints:
+  #       - name: pgadmin
+  #         targetPort: 8080              # Expose pgAdmin on port 8080
+  #         exposure: public              # Make it accessible publicly   
   - name: venv
     volume:
       size: 2G
