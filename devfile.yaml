@@ -53,6 +53,14 @@ components:
           targetPort: 5432
           exposure: none
       mountSources: false
+  - name: dbeaver
+    container:
+      image: dbeaver/cloudbeaver:latest
+      memoryLimit: 512Mi
+      endpoints:
+        - name: cloudbeaver
+          targetPort: 8978
+          exposure: public
 
   # - name: pgadmin4
   #   container:
