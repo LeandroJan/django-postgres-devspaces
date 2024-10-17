@@ -31,9 +31,9 @@ components:
         - name: POSTGRESQL_DATABASE
           value: "db"
         - name: POSTGRESQL_USER
-          value: "user"
+          value: "redhat"
         - name: POSTGRESQL_PASSWORD
-          value: "password"
+          value: "Redhat@123"
         - name: POSTGRESQL_HOST
           value: "localhost"
         - name: POSTGRESQL_PORT
@@ -45,9 +45,9 @@ components:
         - name: POSTGRESQL_DATABASE
           value: "db"
         - name: POSTGRESQL_USER
-          value: "user"
+          value: "redhat"
         - name: POSTGRESQL_PASSWORD
-          value: "password"
+          value: "Redhat@123"
       endpoints:
         - name: postgres
           targetPort: 5432
