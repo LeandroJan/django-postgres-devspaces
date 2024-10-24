@@ -1,0 +1,4 @@
+id: che-incubator/che-code/latest # VS Code
+# id: che-incubator/che-idea/latest # InteliJ
+
+#registryUrl: <url_of_custom_plugin_registry>
